@@ -30,6 +30,20 @@ def index():
     bookings = Booking.query.all()
     return render_template('index.html', bookings=bookings)
 
+@app.route('/search_booking', methods=['POST'])
+def search_booking():
+    booking_id = request.form.get('booking_id')
+    if booking_id.isdigit():
+        booking = Booking.query.filter_by(id=booking_id).first()
+        if booking:
+            flash(f"Booking found: {booking.user_name} - Room: {booking.room_type} - Check-In: {booking.check_in} - Check-Out: {booking.check_out}", 'success')
+        else:
+            flash('Booking not found', 'error')
+    else:
+        flash('Please enter a valid numeric Booking ID', 'error')
+    return redirect(url_for('index'))
+
+
 # Add a new booking
 @app.route('/book', methods=['GET', 'POST'])
 def book():
