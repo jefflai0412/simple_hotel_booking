@@ -9,12 +9,12 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Current Bookings</h1>
+        <h1 class="mb-4">Booking.cum</h1>
 
         <!-- Search Form -->
         <form method="POST" action="{{ url_for('search_booking') }}" class="mb-4">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-4">
                     <input type="text" name="booking_id" class="form-control" placeholder="Enter Booking ID" required>
                 </div>
                 <div class="col-md-4">
@@ -48,31 +48,31 @@
                 </tr>
             </thead>
             <tbody>
-                {% for booking in bookings %}
-                <tr>
-                    <td>{{ booking.user_name }}</td>
-                    <td>{{ booking.check_in }}</td>
-                    <td>{{ booking.check_out }}</td>
-                    <td>{{ booking.room_type }}</td>
-                    <td>
-                        <!-- Delete Button -->
-                        <form method="POST" action="{{ url_for('delete_booking', id=booking.id) }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.user_name }}</td>
+                        <td>{{ booking.check_in }}</td>
+                        <td>{{ booking.check_out }}</td>
+                        <td>{{ booking.room_type }}</td>
+                        <td>
+                            <!-- Delete Button -->
+                            <form method="POST" action="{{ url_for('delete_booking', id=booking.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
             </tbody>
         </table>
 
         <!-- Add Booking Button -->
-        <div class="mt-4">
+        <div class="mt-4 d-flex justify-content-start gap-3">
             <a href="{{ url_for('book') }}" class="btn btn-primary">Book a Room</a>
+            <a href="{{ url_for('admin') }}" class="btn btn-info">Admin</a>
         </div>
-
-        <div class="mt-4">
-            <a href="{{ url_for('admin') }}" class="btn btn-primary">Admin</a>
-        </div>
+        
     </div>
 
     <!-- Bootstrap JS Bundle -->

@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from datetime import date
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:0000@localhost:5432/postgres'
@@ -24,11 +26,10 @@ def init_db():
     db.create_all()
     print("Database initialized!")
 
-# Home Page: Display all bookings
 @app.route('/')
 def index():
-    bookings = Booking.query.all()
-    return render_template('index.html', bookings=bookings)
+    # bookings = Booking.query.all()
+    return render_template('index.html', bookings=None)
 
 @app.route('/search_booking', methods=['POST'])
 def search_booking():
@@ -36,7 +37,8 @@ def search_booking():
     if booking_id.isdigit():
         booking = Booking.query.filter_by(id=booking_id).first()
         if booking:
-            flash(f"Booking found: {booking.user_name} - Room: {booking.room_type} - Check-In: {booking.check_in} - Check-Out: {booking.check_out}", 'success')
+            flash('Booking found', 'success')
+            return render_template('index.html', bookings=[booking])
         else:
             flash('Booking not found', 'error')
     else:
@@ -44,9 +46,11 @@ def search_booking():
     return redirect(url_for('index'))
 
 
+
 # Add a new booking
 @app.route('/book', methods=['GET', 'POST'])
 def book():
+    min_date = date.today().strftime('%Y-%m-%d')  # Set the minimum date to today
     if request.method == 'POST':
         try:
             check_in = datetime.strptime(request.form['check_in'], '%Y-%m-%d')
@@ -67,7 +71,7 @@ def book():
         except Exception as e:
             db.session.rollback()
             flash(f"Error: {str(e)}", 'error')
-    return render_template('booking.html')
+    return render_template('booking.html', min_date=min_date)
 
 # Delete a booking
 @app.route('/delete/<int:id>', methods=['POST'])
